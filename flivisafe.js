@@ -121,13 +121,25 @@ function addScenarioControls() {
     sensor_failure: "Falha"
   };
 
+  // Contêiner dos botões: permite quebrar linha no tablet e virar
+  // faixa com rolagem horizontal no mobile (ver flivisafe.css).
+  // Fica por último em .header-status para não afetar o seletor
+  // ".header-status span:nth-child(2)" usado em setConnectionState.
+  const group = document.createElement("div");
+  group.className = "scenario-controls";
+  group.setAttribute("role", "group");
+  group.setAttribute("aria-label", "Cenários de simulação");
+
   Object.entries(scenarios).forEach(([value, label]) => {
     const button = document.createElement("button");
+    button.type = "button";
+    button.className = "scenario-btn"; // mesmo visual do antigo style.cssText
     button.textContent = label;
-    button.style.cssText = "padding:4px 8px;background:#0f1f1b;color:#9FE1CB;border:1px solid #1D9E75;border-radius:4px;cursor:pointer";
     button.addEventListener("click", () => changeScenario(value).catch(console.error));
-    header.appendChild(button);
+    group.appendChild(button);
   });
+
+  header.appendChild(group);
 }
 
 function updateFooter() {

@@ -572,3 +572,245 @@ body {
   color: var(--color-text-secondary);
   font-weight: 600;
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVIDADE
+   Regras adicionadas sem alterar cores, fontes ou paleta.
+   Breakpoints:
+     Desktop ........ > 1024px (layout original)
+     Tablet ......... 601px – 1024px
+     Empilhamento ... tablet em retrato (≤ 1024px) ou qualquer tela ≤ 767px
+     Mobile ......... ≤ 600px
+     Mobile estreito  ≤ 359px
+   ═══════════════════════════════════════════════════════════ */
+
+
+/* ─── BASE (vale para todas as telas, sem efeito visual no desktop) ─── */
+
+/* 100dvh desconta a barra de endereço dos navegadores mobile */
+@supports (min-height: 100dvh) {
+  .dashboard { min-height: 100dvh; }
+}
+
+/* Permite que itens de grid/flex encolham em vez de estourar a largura */
+.panel,
+.cam-panel,
+.people-panel,
+.stab-card,
+.draft-card,
+.imu-card {
+  min-width: 0;
+}
+
+/* Botões de cenário: mesmos valores do antigo estilo inline do JS */
+.scenario-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scenario-btn {
+  padding: 4px 8px;
+  background: var(--color-bg-card);
+  color: var(--color-accent-light);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Textos do status não quebram no meio */
+.header-status > span,
+.status-item,
+.status-vessel {
+  white-space: nowrap;
+}
+
+
+/* ─── TELAS DE TOQUE: área mínima de toque nos botões ─── */
+
+@media (pointer: coarse) {
+  .scenario-btn {
+    min-height: 40px;
+    min-width: 44px;
+  }
+}
+
+
+/* ─── TABLET (≤ 1024px): cabeçalho e rodapé quebram linha ─── */
+
+@media (max-width: 1024px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
+
+  .header-status {
+    flex-wrap: wrap;
+  }
+
+  .status-bar {
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  .status-items {
+    flex-wrap: wrap;
+    gap: 6px 20px;
+  }
+}
+
+
+/* ─── EMPILHAMENTO: tablet em retrato ou telas ≤ 767px ─── */
+
+@media (max-width: 1024px) and (orientation: portrait),
+       (max-width: 767px) {
+  .mid-grid,
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Divisória vertical vira horizontal quando os painéis empilham */
+  .mid-grid > .panel,
+  .bottom-grid > .cam-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mid-grid > .panel:last-child {
+    border-bottom: none;
+  }
+
+  /* Evita que o SVG da embarcação ocupe a tela inteira em largura total */
+  .vessel-svg {
+    max-height: 380px;
+  }
+}
+
+
+/* ─── MOBILE (≤ 600px) ─── */
+
+@media (max-width: 600px) {
+  .header {
+    padding: 12px 14px;
+  }
+
+  .header-status {
+    width: 100%;
+  }
+
+  /* Faixa de cenários com rolagem horizontal, encostando nas bordas da tela */
+  .scenario-controls {
+    flex: 1 0 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    margin: 2px -14px 0;
+    padding: 0 14px 2px;
+  }
+
+  .scenario-controls::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scenario-btn {
+    scroll-snap-align: start;
+  }
+
+  .panel,
+  .cam-panel,
+  .people-panel {
+    padding: 14px;
+  }
+
+  .vessel-svg {
+    max-height: none;
+  }
+
+  .stability-cards {
+    gap: 8px;
+  }
+
+  .stab-card {
+    padding: 8px 6px;
+  }
+
+  /* Cabe "ATENCAO"/"CRITICO" em 1/3 da largura */
+  .stab-card .value {
+    font-size: clamp(15px, 4.6vw, 20px);
+  }
+
+  .draft-grid {
+    gap: 8px;
+  }
+
+  .imu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .status-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px 14px;
+  }
+
+  .status-items {
+    gap: 4px 14px;
+  }
+}
+
+
+/* ─── MOBILE ESTREITO (≤ 359px) ─── */
+
+@media (max-width: 359px) {
+  .draft-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stability-cards {
+    gap: 6px;
+  }
+}
+
+
+/* ─── DESKTOP: PAINEL DE TELA ÚNICA (> 1024px de largura e ≥ 600px de altura) ───
+   O dashboard ocupa exatamente a altura da janela e o SVG da embarcação
+   encolhe para caber no espaço restante, sem barra de rolagem.
+   Em janelas mais baixas que 600px a rolagem normal volta, para o
+   desenho não ficar pequeno demais. */
+
+@media (min-width: 1025px) and (min-height: 600px) {
+  .dashboard {
+    height: 100vh;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  @supports (height: 100dvh) {
+    .dashboard { height: 100dvh; }
+  }
+
+  .mid-grid {
+    min-height: 0;
+  }
+
+  /* Coluna da embarcação: título e cards fixos, SVG flexível no meio */
+  .mid-grid > .panel:first-child {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .mid-grid > .panel:first-child > .panel-title,
+  .mid-grid > .panel:first-child > .stability-cards {
+    flex-shrink: 0;
+  }
+
+  .mid-grid > .panel:first-child > .vessel-svg {
+    flex: 0 1 auto;   /* não cresce além do tamanho natural, só encolhe */
+    min-height: 0;
+  }
+}
